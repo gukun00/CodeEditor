@@ -4,10 +4,9 @@
     <Layout>
         <Content :style="{padding: '5px'}">
             <Row :gutter="8">
-                <Col span="18">
+                <i-Col span="18">
                     <Row>
                         <Button type="primary"  style="margin:2px" icon="checkmark-round">验证</Button>
-                        <Button type="primary" icon="arrow-right-b">运行</Button>
                     </Row>
                     <Row>
                         <!-- or to manually control the datasynchronization（或者手动控制数据流，需要像这样手动监听changed事件） -->
@@ -21,24 +20,20 @@
                     </Row>
                     <Row>
                       <Card name="1-1" style="height:180px;margin-top:5px">
-                        
+                           <p>{{formulaString}}</p>
                       </Card>
                     </Row>
-                </Col>
-                <Col span="6">
+                </i-Col>
+                <i-Col span="6">
                     <Row>
                         <AutoComplete
                             v-model="selectedMethod"
                             icon="ios-search"
                             placeholder="input here">
-                            <div class="demo-auto-complete-item" v-for="item in allMethods">
+                            <div class="demo-auto-complete-item" v-for="item in allMethods" :key="item.name">
                                 <div class="demo-auto-complete-group">
                                     <span>{{ item.title }}</span>
                                 </div>
-                                <Option v-for="option in item.children" :value="option.title" :key="option.title">
-                                    <span class="demo-auto-complete-title">{{ option.title }}</span>
-                                    <span class="demo-auto-complete-count">{{ option.count }} 人关注</span>
-                                </Option>
                             </div>
                         </AutoComplete>
                     </Row>
@@ -51,10 +46,10 @@
                     </Row>
                     <Row>
                         <Card style="height:180px;margin-top:5px">
-                          123123
+                          <p>{{formulaString}}</p>
                         </Card>
                     </Row>
-                </Col>
+                </i-Col>
             </Row>
            
         </Content>
@@ -120,7 +115,6 @@ export default {
     };
   },
   created() {
-    console.log(keyWords);
     keyWords.forEach(item => {
       switch (item.type) {
         case 1:
@@ -150,6 +144,16 @@ export default {
   computed: {
     codemirror() {
       return this.$refs.myCm.codemirror;
+    },
+    formulaString() {
+      var fstring = this.code;
+      if (keyWords) {
+        keyWords.forEach(element => {
+          fstring = fstring.replaceAll(element.name, element.frendlyName);
+        });
+      }
+      console.log(fstring, "fstring");
+      return fstring;
     }
   },
   mounted() {
@@ -157,14 +161,16 @@ export default {
     // you can use this.codemirror to do something...
   }
 };
+
+String.prototype.replaceAll = function(FindText, RepText) {
+  let regExp = new RegExp(FindText, "g");
+  return this.replace(regExp, RepText);
+};
 </script>
 
 <style>
 .CodeMirror-lines {
   font-size: 28px;
-}
-
-.CodeMirror {
 }
 
 .layout {
